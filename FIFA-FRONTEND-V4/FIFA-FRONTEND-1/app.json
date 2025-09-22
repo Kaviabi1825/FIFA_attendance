@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "FIFA",
+    "slug": "FIFA",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo3.png",
+    "scheme": "fifa",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.muralitex.fifa"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo3.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.muralitex.fifa"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/logo3.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo3.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "dcf8f359-8392-4161-8356-ba7bcd22b838"
+      }
+    },
+    "developmentClient": {
+      "silentLaunch": false
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/dcf8f359-8392-4161-8356-ba7bcd22b838",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "jsEngine": "hermes",
+    "owner": "muralitex",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "hostType": "lan",
+    "lanType": "ip",
+    "dev": true,
+    "minify": false,
+    "https": false
+  }
+}
