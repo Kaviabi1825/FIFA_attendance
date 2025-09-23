@@ -80,7 +80,7 @@ export default function HomeScreen() {
             </Card>
             <Card 
               style={[styles.card, { backgroundColor: theme.colors.tertiary }]}
-              onPress={() => {}}
+              onPress={() => router.push('/Masters/masters')}
             >
               <Card.Content style={styles.cardContent}>
                 <Ionicons name="list-outline" size={24} color="white" />
@@ -135,9 +135,9 @@ export default function HomeScreen() {
               </View>
             </TouchableRipple>
             
-            <TouchableRipple style={styles.iconItem} onPress={() => {}}>
+            <TouchableRipple style={styles.iconItem} onPress={() => router.push('/transport' as any)}>
               <View style={styles.iconItemContent}>
-                <View style={[styles.iconCircle, { backgroundColor: '#F3E5F5' }]}>
+                <View style={[styles.iconCircle, { backgroundColor: '#F3E5F5' }]}> 
                   <Ionicons name="bus" size={24} color="#7B1FA2" />
                 </View>
                 <Text style={styles.iconText}>Transport</Text>

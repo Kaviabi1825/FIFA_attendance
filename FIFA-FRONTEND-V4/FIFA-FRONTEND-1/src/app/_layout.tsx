@@ -5,7 +5,7 @@ import { PaperProvider, MD3LightTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StoreInitializer } from "../components/StoreInitializer";
 import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from "../lib/apollo";
+import { ordersClient } from "../lib/apollo";
 
 // Create custom theme based on Murali Tex brand colors
 const theme = {
@@ -28,7 +28,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <StatusBar style="light" />
-        <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={ordersClient}>
         <StoreInitializer>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
@@ -47,6 +47,7 @@ export default function RootLayout() {
           <Stack.Screen name="attendance/reports" />
           <Stack.Screen name="attendance/bulk-update" />
           <Stack.Screen name="attendance/settings" />
+          <Stack.Screen name="transport" />
           <Stack.Screen name="profile/personal-info" />
           <Stack.Screen name="profile/settings" />
           <Stack.Screen name="profile/notifications" />
