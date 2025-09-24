@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { Appbar, TextInput, Button } from 'react-native-paper';
+import { Appbar, TextInput, Button, Menu } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import BottomNavigation from '../../components/BottomNavigation';
 
 export default function General() {
   const router = useRouter();
-  const [unitNo, setUnitNo] = useState('');
-  const [unitName, setUnitName] = useState('');
-  const [buildingNo, setBuildingNo] = useState('');
-  const [streetName, setStreetName] = useState('');
-  const [district, setDistrict] = useState('');
-  const [streetCode, setStreetCode] = useState('');
-  const [businessType, setBusinessType] = useState('');
-  const [sqFeet, setSqFeet] = useState('');
-  const [workers, setWorkers] = useState('');
+  const [unitNo] = useState('MZ-100');
+  const [unitName] = useState('Murali Tex Co.');
+  const [buildingNo] = useState('12A');
+  const [streetName] = useState('Industrial Road');
+  const [district] = useState('Chennai');
+  const [streetCode] = useState('600001');
+  const [businessType, setBusinessType] = useState('Garments');
+  const [sqFeet] = useState('12000');
+  const [workers] = useState('120');
   const [location, setLocation] = useState<string | null>(null);
+  const [editedType, setEditedType] = useState<string | null>(null);
 
   const fetchLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -30,42 +30,45 @@ export default function General() {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={styles.header}>
-        <Appbar.BackAction onPress={() => router.back()} color="white" />
-        <Appbar.Content title="General" color="white" />
-      </Appbar.Header>
-
       <ScrollView contentContainerStyle={styles.content}>
-        <TextInput label="Unit No." value={unitNo} onChangeText={setUnitNo} style={styles.input} />
-        <TextInput label="Unit Name" value={unitName} onChangeText={setUnitName} style={styles.input} />
-        <TextInput label="Building No." value={buildingNo} onChangeText={setBuildingNo} style={styles.input} />
-        <TextInput label="Street Name" value={streetName} onChangeText={setStreetName} style={styles.input} />
-        <TextInput label="District" value={district} onChangeText={setDistrict} style={styles.input} />
-        <TextInput label="Street Code" value={streetCode} onChangeText={setStreetCode} style={styles.input} />
-        <TextInput label="Business Type" value={businessType} onChangeText={setBusinessType} style={styles.input} />
-
-        <Text style={styles.sectionTitle}>Unit Capacity</Text>
-        <TextInput label="Sq Feet" value={sqFeet} onChangeText={setSqFeet} style={styles.input} keyboardType="numeric" />
-        <TextInput label="Workers Count" value={workers} onChangeText={setWorkers} style={styles.input} keyboardType="numeric" />
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <Button mode="contained" onPress={fetchLocation}>Location</Button>
-          <Text>{location || 'No location'}</Text>
+        {/* Read-only box with unit info */}
+        <View style={styles.infoBox}>
+          <Text style={styles.infoRow}><Text style={{fontWeight:'600'}}>Unit No.</Text>  MZ-100</Text>
+          <Text style={styles.infoRow}><Text style={{fontWeight:'600'}}>Unit Name</Text>  Murali Tex Co.</Text>
+          <Text style={styles.infoRow}><Text style={{fontWeight:'600'}}>Building No.</Text>  12A</Text>
+          <Text style={styles.infoRow}><Text style={{fontWeight:'600'}}>Street Name</Text>  Industrial Road</Text>
+          <Text style={styles.infoRow}><Text style={{fontWeight:'600'}}>District</Text>  Chennai</Text>
         </View>
 
-        <Button mode="contained" style={{ marginTop: 20 }} onPress={() => {
-          // Basic validation
-          const missing = [];
-          if (!unitNo) missing.push('Unit No.');
-          if (!unitName) missing.push('Unit Name');
-          if (missing.length) {
-            alert('Missing: ' + missing.join(', '));
-            return;
-          }
-          alert('Saved (demo)');
-        }}>Save</Button>
-      </ScrollView>
 
-      <BottomNavigation />
+        <View style={styles.capacityBox}>
+          <Text style={{fontWeight:'700'}}>Unit Capacity</Text>
+          <Text>Sq Feet : 12000</Text>
+        </View>
+
+        {/* Business type dropdown - editable */}
+        <View style={{ marginTop: 12 }}>
+          <Text style={{fontWeight:'600'}}>Business Type</Text>
+          <View style={{ flexDirection: 'row', marginTop: 6 }}>
+            <TouchableOpacity onPress={() => setEditedType('Job Work')} style={{ padding: 10, backgroundColor: editedType === 'Job Work' ? '#B2DFDB' : '#fff', borderRadius:6, marginRight: 8 }}>
+              <Text>Job Work</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setEditedType('Garments')} style={{ padding: 10, backgroundColor: editedType === 'Garments' ? '#B2DFDB' : '#fff', borderRadius:6 }}>
+              <Text>Garments</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        <Button
+          mode="contained"
+          onPress={() => { alert('Saved (demo)'); setEditedType(null); }}
+          disabled={!editedType}
+          style={{ marginTop: 20, backgroundColor: editedType ? '#009688' : '#99c6c2ff' }}
+          labelStyle={{ color: 'white' }}
+        >
+          Save
+        </Button>
+      </ScrollView>
     </View>
   );
 }
@@ -75,5 +78,8 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#009688' },
   content: { padding: 15 },
   input: { marginBottom: 12 },
-  sectionTitle: { fontWeight: '600', color: '#009688', marginTop: 12, marginBottom: 6 }
+  sectionTitle: { fontWeight: '600', color: '#45c7baff', marginTop: 12, marginBottom: 6 }
+  , infoBox: { backgroundColor: '#fff', padding: 12, borderRadius: 8, elevation: 1 },
+  infoRow: { paddingVertical: 6 },
+  capacityBox: { backgroundColor: '#fff', padding: 12, borderRadius: 8, marginTop: 12, alignItems: 'center' }
 });

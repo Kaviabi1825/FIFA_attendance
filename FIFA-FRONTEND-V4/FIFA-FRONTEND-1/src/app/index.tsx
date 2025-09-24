@@ -80,7 +80,7 @@ export default function HomeScreen() {
             </Card>
             <Card 
               style={[styles.card, { backgroundColor: theme.colors.tertiary }]}
-              onPress={() => router.push('/Masters/masters')}
+              onPress={() => router.push('/Masters/Units')}
             >
               <Card.Content style={styles.cardContent}>
                 <Ionicons name="list-outline" size={24} color="white" />

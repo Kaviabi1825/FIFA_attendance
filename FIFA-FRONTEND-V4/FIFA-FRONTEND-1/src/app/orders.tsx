@@ -33,6 +33,8 @@ interface SizeData {
   dcQty: string;
   completed: string;
   itemId?: string;
+  price?: string;
+  serviceFee?: string;
 }
 
 interface AccessoryData {
@@ -117,7 +119,7 @@ export default function OrdersScreen() {
     origin: "Domestic" | "Foreign";
     dueDate?: string;
 
-    sizes: { size: string; dcQty: string }[];
+    sizes: { size: string; dcQty: string; price?: string; serviceFee?: string }[];
     accessories: { item: string; quantity: string }[];
   } = {
     supplier: "",
@@ -127,7 +129,7 @@ export default function OrdersScreen() {
     priority: "Normal",
     origin: "Domestic",
     dueDate: "",
-    sizes: [{ size: "", dcQty: "" }],
+  sizes: [{ size: "", dcQty: "", price: "", serviceFee: "" }],
     accessories: [{ item: "", quantity: "" }],
   };
 
@@ -368,7 +370,7 @@ export default function OrdersScreen() {
   // Function to update size field values
   const updateSizeField = (
     index: number,
-    field: "size" | "dcQty",
+    field: "size" | "dcQty" | "price" | "serviceFee",
     value: string
   ) => {
     setNewItem((prev) => ({
@@ -383,6 +385,8 @@ export default function OrdersScreen() {
         // clear per-index size/quantity errors
         if (next[`size_${index}`]) next[`size_${index}`] = undefined;
         if (next[`dcQty_${index}`]) next[`dcQty_${index}`] = undefined;
+        if (next[`price_${index}`]) next[`price_${index}`] = undefined;
+        if (next[`serviceFee_${index}`]) next[`serviceFee_${index}`] = undefined;
         // clear top-level sizes error
         if (next.sizes) next.sizes = undefined;
         return next;
@@ -708,17 +712,20 @@ export default function OrdersScreen() {
           ) : (
             orderData.map((order) => (
               <Card
-              key={order.id}
-              style={[
-                styles.card,
-                selectedOrders.includes(order.id) && styles.cardSelected,
-              ]}
-              elevation={selectedOrders.includes(order.id) ? 5 : 3}
-              onPress={() => handleCardPress(order.id)}
-              onLongPress={() => handleCardLongPress(order.id)}
-            >
-              <Card.Content style={styles.cardContent}>
-                <View style={styles.cardHeader}>
+                key={order.id}
+                style={[
+                  styles.card,
+                  selectedOrders.includes(order.id) && styles.cardSelected,
+                ]}
+                elevation={selectedOrders.includes(order.id) ? 5 : 3}
+              >
+                <Card.Content style={styles.cardContent}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => handleCardPress(order.id)}
+                    onLongPress={() => handleCardLongPress(order.id)}
+                  >
+                    <View style={styles.cardHeader}>
                   {order.favorite && (
                     <Ionicons
                       name="star"
@@ -781,60 +788,50 @@ export default function OrdersScreen() {
                     )}
                   </View>
                 </View>
+                </TouchableOpacity>
               </Card.Content>
 
               {expandedOrders[order.id] === true && (
                 <Card.Content style={styles.expandedContent}>
                   <View style={styles.divider} />
 
-                  {/* Column Headers */}
-                  <View style={styles.detailsHeader}>
-                    <Text style={[styles.detailHeaderText, { flex: 0.7 }]}>
-                      Product
-                    </Text>
-                    <Text style={[styles.detailHeaderText, { flex: 1 }]}>
-                      Order Qty
-                    </Text>
-                    <Text style={[styles.detailHeaderText, { flex: 1 }]}>
-                      Completed
-                    </Text>
-                    <Text style={[styles.detailHeaderText, { flex: 0.7 }]}>
-                      Action
-                    </Text>
-                  </View>
-
-                  {/* Size Rows */}
-                  {order.sizes &&
-                    order.sizes.map((sizeData, index) => (
-                      <View key={index} style={styles.sizeRow}>
-                        <Text style={[styles.sizeText, { flex: 0.7 }]}>
-                          {sizeData.size}
-                        </Text>
-                        <Text style={[styles.qtyText, { flex: 1 }]}>
-                          {sizeData.dcQty} pcs
-                        </Text>
-                        <Text style={[styles.completedText, { flex: 1 }]}>
-                          {sizeData.completed} pcs
-                        </Text>
-                        <View style={{ flex: 0.7, alignItems: "center" }}>
-                          <TouchableOpacity
-                            style={styles.updateQtyButton}
-                            onPress={() =>
-                              handleUpdateQuantity(
-                                order.id,
-                                sizeData.size || ""
-                              )
-                            }
-                          >
-                            <MaterialIcons
-                              name="edit"
-                              size={18}
-                              color="white"
-                            />
-                          </TouchableOpacity>
+                    {/* Horizontal area for details (single ScrollView keeps header and rows aligned) */}
+                    <ScrollView
+                      horizontal
+                      nestedScrollEnabled
+                      showsHorizontalScrollIndicator
+                      contentContainerStyle={{ minWidth: 540, paddingBottom: 6 }}
+                    >
+                      <View style={{ minWidth: 540 }}>
+                        <View style={styles.detailsHeaderRow}>
+                          <Text style={[styles.detailHeaderText, { width: 120 }]}>Product</Text>
+                          <Text style={[styles.detailHeaderText, { width: 100 }]}>Order Qty</Text>
+                          <Text style={[styles.detailHeaderText, { width: 100 }]}>Completed</Text>
+                          <Text style={[styles.detailHeaderText, { width: 120 }]}>Price</Text>
+                          <Text style={[styles.detailHeaderText, { width: 100 }]}>Action</Text>
                         </View>
+
+                        {order.sizes &&
+                          order.sizes.map((sizeData, index) => (
+                            <View key={index} style={styles.sizeRowHorizontal}>
+                              <Text style={[styles.sizeTextHR, { width: 120 }]}>{sizeData.size}</Text>
+                              <Text style={[styles.qtyTextHR, { width: 100 }]}>{sizeData.dcQty} pcs</Text>
+                              <Text style={[styles.completedTextHR, { width: 100 }]}>{sizeData.completed} pcs</Text>
+                              <Text style={[styles.qtyTextHR, { width: 120 }]}>₹100</Text>
+                              <View style={{ width: 100, alignItems: 'center' }}>
+                                <TouchableOpacity
+                                  style={styles.updateQtyButton}
+                                  onPress={() => handleUpdateQuantity(order.id, sizeData.size || "")}
+                                >
+                                  <MaterialIcons name="edit" size={18} color="white" />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          ))}
                       </View>
-                    ))}
+                    </ScrollView>
+
+                  
 
                   {/* Delivery Button */}
                   <Button
@@ -1347,62 +1344,74 @@ export default function OrdersScreen() {
                       <Text style={styles.cardSectionTitle}>Add Item</Text>
                     </View>
                     {newItem.sizes.map((sizeItem, index) => (
-                      <View key={index} style={styles.sizeInputRow}>
-                        <View style={styles.sizeNumberBadge}>
-                          <Text style={styles.sizeNumberText}>{index + 1}</Text>
+                      <View key={index} style={styles.sizeItemCard}>
+                        <View style={styles.sizeItemHeader}>
+                          <View style={styles.sizeNumberBadge}>
+                            <Text style={styles.sizeNumberText}>{index + 1}</Text>
+                          </View>
+                          <TouchableOpacity
+                            onPress={() => removeSizeField(index)}
+                            style={styles.removeButton}
+                          >
+                            <MaterialIcons
+                              name="remove-circle"
+                              size={24}
+                              color="#FF6B6B"
+                            />
+                          </TouchableOpacity>
                         </View>
-                        <View style={{ flex: 1 }}>
-                          <PaperInput
-                            label="Size"
-                            value={sizeItem.size}
-                            onChangeText={(text) =>
-                              updateSizeField(index, "size", text)
-                            }
-                            style={styles.sizeInput}
-                            mode="outlined"
-                            activeOutlineColor="#009688"
-                            outlineColor="#DDDDDD"
-                            theme={{ colors: { primary: "#009688" } }}
-                          />
-                          {fieldErrors[`size_${index}`] && (
-                            <Text style={styles.warningText}>
-                              {fieldErrors[`size_${index}`]}
-                            </Text>
-                          )}
-                        </View>
-                        <View style={{ flex: 1.5 }}>
-                          <PaperInput
-                            label="Quantity"
-                            value={sizeItem.dcQty}
-                            onChangeText={(text) => {
-                              if (/^[0-9]*$/.test(text))
-                                updateSizeField(index, "dcQty", text);
-                            }}
-                            style={[
-                              styles.qtyInput,
-                              { flex: 1, marginRight: 5, textAlign: "left" },
-                            ]}
-                            keyboardType="numeric"
-                            activeOutlineColor="#009688"
-                            outlineColor="#DDDDDD"
-                            theme={{ colors: { primary: "#009688" } }}
-                          />
-                          {fieldErrors[`dcQty_${index}`] && (
-                            <Text style={styles.warningText}>
-                              {fieldErrors[`dcQty_${index}`]}
-                            </Text>
-                          )}
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => removeSizeField(index)}
-                          style={styles.removeButton}
-                        >
-                          <MaterialIcons
-                            name="remove-circle"
-                            size={24}
-                            color="#FF6B6B"
-                          />
-                        </TouchableOpacity>
+
+                        <PaperInput
+                          label="Size"
+                          value={sizeItem.size}
+                          onChangeText={(text) => updateSizeField(index, "size", text)}
+                          style={[styles.sizeInput, { marginBottom: 8 }]}
+                          mode="outlined"
+                          activeOutlineColor="#009688"
+                          outlineColor="#DDDDDD"
+                          theme={{ colors: { primary: "#009688" } }}
+                        />
+                        {fieldErrors[`size_${index}`] && (
+                          <Text style={styles.warningText}>{fieldErrors[`size_${index}`]}</Text>
+                        )}
+
+                        <PaperInput
+                          label="Quantity"
+                          value={sizeItem.dcQty}
+                          onChangeText={(text) => { if (/^[0-9]*$/.test(text)) updateSizeField(index, "dcQty", text); }}
+                          style={[styles.qtyInput, { marginBottom: 8 }]}
+                          keyboardType="numeric"
+                          activeOutlineColor="#009688"
+                          outlineColor="#DDDDDD"
+                          theme={{ colors: { primary: "#009688" } }}
+                        />
+                        {fieldErrors[`dcQty_${index}`] && (
+                          <Text style={styles.warningText}>{fieldErrors[`dcQty_${index}`]}</Text>
+                        )}
+
+                        <PaperInput
+                          label="Price (₹)"
+                          value={sizeItem.price || ""}
+                          onChangeText={(text) => updateSizeField(index, "price", text)}
+                          style={[styles.qtyInput, { marginBottom: 8 }]}
+                          keyboardType="numeric"
+                          mode="outlined"
+                          activeOutlineColor="#009688"
+                          outlineColor="#DDDDDD"
+                          theme={{ colors: { primary: "#009688" } }}
+                        />
+
+                        <PaperInput
+                          label="Service fee (₹)"
+                          value={sizeItem.serviceFee || ""}
+                          onChangeText={(text) => updateSizeField(index, "serviceFee", text)}
+                          style={[styles.qtyInput, { marginBottom: 4 }]}
+                          keyboardType="numeric"
+                          mode="outlined"
+                          activeOutlineColor="#009688"
+                          outlineColor="#DDDDDD"
+                          theme={{ colors: { primary: "#009688" } }}
+                        />
                       </View>
                     ))}
                     {fieldErrors.sizes && (
@@ -1764,6 +1773,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
     backgroundColor: "#F5F5F5",
   },
+  detailsHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingHorizontal: 6,
+  },
   detailHeaderText: {
     fontSize: 14,
     fontWeight: "bold",
@@ -1779,23 +1793,34 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
+  sizeRowHorizontal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    paddingHorizontal: 6,
+  },
   sizeText: {
     fontSize: 14,
     fontWeight: "500",
     color: "#333",
     textAlign: "center",
   },
+  sizeTextHR: { fontSize: 14, fontWeight: '500', color: '#333', textAlign: 'left' },
   qtyText: {
     fontSize: 14,
     color: "#666",
     textAlign: "center",
   },
+  qtyTextHR: { fontSize: 14, color: '#666', textAlign: 'left' },
   completedText: {
     fontSize: 14,
     color: "#009688",
     fontWeight: "500",
     textAlign: "center",
   },
+  completedTextHR: { fontSize: 14, color: '#009688', fontWeight: '500', textAlign: 'left' },
   updateQtyButton: {
     backgroundColor: "#009688",
     width: 36,
@@ -1977,6 +2002,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
   },
+  sizeItemCard: {
+    backgroundColor: '#F9FBFF',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  sizeItemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   sizeNumberBadge: {
     width: 24,
     height: 24,

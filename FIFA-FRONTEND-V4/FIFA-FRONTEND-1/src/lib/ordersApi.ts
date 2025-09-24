@@ -17,7 +17,7 @@ interface GraphQLResponse<T> {
   errors?: Array<{ message: string }>;
 }
 
-async function graphqlFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+export async function graphqlFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   let lastError: any = null;
   for (const endpoint of GRAPHQL_ENDPOINTS) {
     try {
