@@ -117,7 +117,7 @@ export default function HomeScreen() {
         {/* Icons Row */}
         <View style={styles.iconsContainer}>
           <View style={styles.iconsRow}>
-            <TouchableRipple style={styles.iconItem} onPress={() => router.push('/attendance')}>
+            <TouchableRipple style={styles.iconItem} onPress={() => router.push('/attendanceApp')}>
               <View style={styles.iconItemContent}>
                 <View style={[styles.iconCircle, { backgroundColor: '#E3F2FD' }]}>
                   <MaterialIcons name="event-available" size={24} color="#1976D2" />
